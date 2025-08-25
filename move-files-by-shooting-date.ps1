@@ -1,5 +1,5 @@
 # 処理対象のディレクトリを指定
-$targetDir = "C:\Users\motoyuki\Desktop\emiko\DCIM\test\102SHARP"
+$targetDir = "C:\Users\motoyuki\Desktop\emiko\DCIM\100SHARP"
 
 # Shell.Application COMオブジェクトを作成
 $shell = New-Object -ComObject Shell.Application
@@ -17,20 +17,21 @@ Get-ChildItem -Path $targetDir -Filter *.jpg -File | ForEach-Object {
         Write-Warning "撮影日が取得できません: $($file.FullName)"
         return
     }
+    $dateTakenStr = $dateTakenStr.ToString() -replace [char]0x200E, ""
+    $dateTakenStr = $dateTakenStr.ToString() -replace [char]0x200F, ""
+    $dateTakenStr = $dateTakenStr.Split(' ')[0]  # 日付部分のみ取得
 
     # 撮影日をDateTime型に変換
-    # try {
-    #     $dateTaken = [datetime]::ParseExact($dateTakenStr1, 'yyyy/MM/dd', $null)
-    # }
-    # catch {
-    #     Write-Warning "撮影日が解析できません: $($file.FullName)"
-    #     return
-    # }
+    try {
+        $dateTaken = [datetime]::ParseExact($dateTakenStr, 'yyyy/MM/dd', $null)
+    }
+    catch {
+        Write-Warning "撮影日が解析できません: $($file.FullName)"
+        return
+    }
 
     # yyyy-MM-dd形式のフォルダ名を作成
-    # $dateFolderName = $dateTaken.ToString("yyyy-MM-dd")
-    $dateTakenStr1 = $dateTakenStr.Split(' ')[0].Split('/')[0..2] -join '-'
-    $dateFolderName = $dateTakenStr1
+    $dateFolderName = $dateTaken.ToString("yyyy-MM-dd")
     $destFolder = Join-Path $targetDir $dateFolderName
 
     # フォルダが存在しなければ作成
