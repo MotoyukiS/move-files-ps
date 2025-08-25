@@ -19,16 +19,18 @@ Get-ChildItem -Path $targetDir -Filter *.jpg -File | ForEach-Object {
     }
 
     # 撮影日をDateTime型に変換
-    try {
-        $dateTaken = [datetime]::Parse($dateTakenStr)
-    }
-    catch {
-        Write-Warning "撮影日が解析できません: $($file.FullName)"
-        return
-    }
+    # try {
+    #     $dateTaken = [datetime]::ParseExact($dateTakenStr1, 'yyyy/MM/dd', $null)
+    # }
+    # catch {
+    #     Write-Warning "撮影日が解析できません: $($file.FullName)"
+    #     return
+    # }
 
     # yyyy-MM-dd形式のフォルダ名を作成
-    $dateFolderName = $dateTaken.ToString("yyyy-MM-dd")
+    # $dateFolderName = $dateTaken.ToString("yyyy-MM-dd")
+    $dateTakenStr1 = $dateTakenStr.Split(' ')[0].Split('/')[0..2] -join '-'
+    $dateFolderName = $dateTakenStr1
     $destFolder = Join-Path $targetDir $dateFolderName
 
     # フォルダが存在しなければ作成
